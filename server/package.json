@@ -1,8 +1,8 @@
 {
   "name": "server",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Api REST to Gateway app",
+  "author": "Ing. Yasmany Santalla Pereda",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -24,15 +24,17 @@
     "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.5.0",
     "@nestjs/core": "^7.0.0",
+    "@nestjs/mongoose": "^7.0.2",
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/swagger": "^4.6.0",
-    "@typegoose/typegoose": "^7.3.5",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
+    "mongodb": "^3.6.2",
     "mongoose": "^5.10.5",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
+    "swagger-ui-express": "^4.1.4",
     "uuid-apikey": "^1.4.6"
   },
   "devDependencies": {
@@ -41,6 +43,7 @@
     "@nestjs/testing": "^7.0.0",
     "@types/express": "^4.17.3",
     "@types/jest": "26.0.10",
+    "@types/mongodb": "^3.5.27",
     "@types/mongoose": "^5.7.36",
     "@types/node": "^13.9.1",
     "@types/supertest": "^2.0.8",

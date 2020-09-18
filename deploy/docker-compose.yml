@@ -1,0 +1,43 @@
+version: "3.3"
+
+networks:
+  private:
+   ipam:
+      config:
+      - subnet: 172.16.238.0/24
+
+volumes:
+  mongodb:
+
+services:
+  mongodb:
+    image: mongo
+    networks:
+      - "private"
+    volumes:
+      - mongodb:/var/lib/mongodb
+    ports:
+      - 27017:27017
+    restart: always
+
+  server:
+    image: mserver:v1.0.0
+    depends_on:
+      - "mongodb"
+    networks:
+      - "private"
+    ports:
+      - "3000:3000"
+    environment:
+      MONGO_CONNECTION: "mongodb://mongodb:27017"
+      MONGO_DATABASE: "kueskidb"
+      SERVER_SCHEMA: "http"
+      SERVER_URL: "api.kueski.local"
+      SERVER_PORT: ":8000"
+      SERVER_JWT_SECRET: "sECrEt"
+      
+    command: "npm run start:prod"
+    restart: "unless-stopped"
+
+    
+
