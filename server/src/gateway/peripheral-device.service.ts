@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 import { PeripheralDeviceDoc } from './schemas/peripheral-device.schema';
-import { CreatePeripheralDeviceDTO } from './dto/peripheral-device.dto';
 import { PeripheralDevice } from './interfaces/peripheral-device.interface';
+
 
 @Injectable()
 export class PeripheralDeviceService {
@@ -14,13 +14,16 @@ export class PeripheralDeviceService {
   ) {}
 
   async insertOne(
-    createPeripheralDeviceDTO: CreatePeripheralDeviceDTO,
+    createPeripheralDevice: PeripheralDevice,
+    gatewayID: Types.ObjectId
   ): Promise<PeripheralDevice> {
+
     const peripheralDevice = await this.peripheralDeviceModel.create({
-      status: createPeripheralDeviceDTO.status,
-      dateCreated: createPeripheralDeviceDTO.dateCreated,
-      uid: createPeripheralDeviceDTO.uid,
-      vendor: createPeripheralDeviceDTO.vendor,
+      status: createPeripheralDevice.status,
+      dateCreated: createPeripheralDevice.dateCreated,
+      uid: createPeripheralDevice.uid,
+      vendor: createPeripheralDevice.vendor,
+      gatewayID: gatewayID
     });
 
     return {
@@ -42,11 +45,11 @@ export class PeripheralDeviceService {
     }
   }
 
-  async findByIDs(ids: string[]): Promise<PeripheralDevice[]> {
-    return await this.peripheralDeviceModel.find({ _id: { $in: ids } }).lean();
+  async findByIDs(gatewayID: Types.ObjectId): Promise<PeripheralDevice[]> {
+    return await this.peripheralDeviceModel.find({ gatewayID: gatewayID }).lean();
   }
 
-  async countByIDs(ids: string[]): Promise<number> {
-    return await this.peripheralDeviceModel.count({ _id: { $in: ids } }).lean();
+  async countByIDs(gatewayID: Types.ObjectId ): Promise<number> {
+    return await this.peripheralDeviceModel.countDocuments({ gatewayID: gatewayID }).lean();
   }
 }

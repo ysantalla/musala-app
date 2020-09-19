@@ -5,7 +5,8 @@ import { GatewaysService } from './gateway.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { GatewayDoc } from './schemas/gateway.schema';
 import { Gateway } from './interfaces/gateway.interface';
-
+import { PeripheralDeviceService } from './peripheral-device.service';
+import { PeripheralDeviceDoc } from './schemas/peripheral-device.schema';
 
 describe('GatewayController', () => {
   let gatewaysController: GatewaysController;
@@ -16,9 +17,14 @@ describe('GatewayController', () => {
       controllers: [GatewaysController],
       providers: [
         GatewaysService,
+        PeripheralDeviceService,
         {
           provide: getModelToken(GatewayDoc.name),
           useValue: GatewayDoc,
+        },
+        {
+          provide: getModelToken(PeripheralDeviceDoc.name),
+          useValue: PeripheralDeviceDoc,
         },
       ],
     }).compile();
@@ -27,23 +33,45 @@ describe('GatewayController', () => {
     gatewaysController = app.get<GatewaysController>(GatewaysController);
   });
 
-  describe('findAll', () => {
-    it('should return "Hello World!"', async () => {
+  describe('createGateway', () => {
+    it('should insert valid gateway', async () => {
+      const result: Gateway = {
+        ipAddress: '1.2.3.4',
+        name: 'Gateway-1',
+        serialNumber: 'M123456',
+      };
 
-      const result: Gateway[] = [
-        {
-          age: 1,
-          breed: '123',
-          name: 'Hola'
-        }
-      ];
+      jest
+        .spyOn(gatewaysService, 'insertOne')
+        .mockImplementation(async () => result);
 
-      jest.spyOn(gatewaysService, 'getAll').mockImplementation(async () => result);
+      expect(await gatewaysController.createGateway({
+        ipAddress: '1.2.3.4',
+        name: 'Gateway-1',
+        serialNumber: 'M123456'
+      })).toBe(result);
+    });
 
-      expect(await gatewaysController.getGateways()).toBe(result);
+    it('should insert invalid ip address', async () => {
+      const result: Gateway = {
+        ipAddress: '1',
+        name: 'Gateway-1',
+        serialNumber: 'M123456',
+      };
 
+      jest
+        .spyOn(gatewaysService, 'insertOne')
+        .mockImplementation(async () => result);
+
+      const result1 = await gatewaysController.createGateway({
+        ipAddress: '1',
+        name: 'Gateway-1',
+        serialNumber: 'M123456'
+      });
+
+      console.log(result1);
+
+      expect(result1).toBe(false);
     });
   });
-
 });
-

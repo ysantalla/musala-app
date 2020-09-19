@@ -11,8 +11,8 @@ import { PeripheralDeviceService } from './peripheral-device.service';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: GatewayDoc.name, schema: GatewaySchema },
-      { name: PeripheralDeviceDoc.name, schema: PeripheralDeviceSchema },
+      { name: GatewayDoc.name, schema: GatewaySchema, collection: GatewayDoc.name },
+      { name: PeripheralDeviceDoc.name, schema: PeripheralDeviceSchema, collection: PeripheralDeviceDoc.name },
     ]),
   ],
   controllers: [GatewaysController],

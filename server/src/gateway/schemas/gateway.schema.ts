@@ -14,10 +14,6 @@ export class GatewayDoc extends Document {
   @Prop()
   ipAddress: string;
 
-  @Prop({
-    type: [String],
-  })
-  peripheralDeviceIDs: string[];
 }
 
 export const GatewaySchema = SchemaFactory.createForClass(GatewayDoc);

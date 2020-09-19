@@ -4,12 +4,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ObjectID } from 'mongodb';
 
-import { CreateGatewayDTO } from './dto/gateway.dto';
 import { GatewayDoc } from './schemas/gateway.schema';
 import { Gateway } from './interfaces/gateway.interface';
 import { PeripheralDeviceService } from './peripheral-device.service';
-import { CreatePeripheralDeviceDTO } from './dto/peripheral-device.dto';
-
+import { PeripheralDeviceDoc } from './schemas/peripheral-device.schema';
+import { PeripheralDevice } from './interfaces/peripheral-device.interface';
 
 @Injectable()
 export class GatewaysService {
@@ -19,8 +18,34 @@ export class GatewaysService {
     private readonly peripheralDeviceService: PeripheralDeviceService,
   ) {}
 
-  async getOne(id: string): Promise<Gateway> {
+  async getAll(
+    limit = 10,
+    skip = 0,
+  ): Promise<Gateway[]> {
 
+    return await this.gatewayModel.aggregate([
+      {
+        $lookup: {
+          from: PeripheralDeviceDoc.name,
+          localField: '_id',
+          foreignField: 'gatewayID',
+          as: 'peripheralDevice',
+        },
+      },
+      {
+        $skip: skip * limit,
+      },
+      {
+        $limit: limit,
+      },
+    ]);
+  }
+
+  async count(): Promise<number> {
+    return await this.gatewayModel.countDocuments().lean();
+  }
+
+  async getOne(id: string): Promise<Gateway> {
     if (!ObjectID.isValid(id)) {
       throw new HttpException(
         {
@@ -31,29 +56,29 @@ export class GatewaysService {
       );
     }
 
-    const gateway = await this.gatewayModel.findOne({ _id: id }).lean();
-
-    if (!gateway) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: `Gateway not found by ID ${id}`,
+    const gateway: Gateway[] = await this.gatewayModel.aggregate([
+      { $match: { _id: ObjectID.createFromHexString(id) } },
+      {
+        $lookup: {
+          from: PeripheralDeviceDoc.name,
+          localField: '_id',
+          foreignField: 'gatewayID',
+          as: 'peripheralDevice',
         },
-        HttpStatus.BAD_REQUEST,
-      );
+      },
+    ]);
+
+    if (gateway.length > 0) {
+      return gateway[0];
     }
 
-    const peripheralDevice = await this.peripheralDeviceService.findByIDs(
-      gateway.peripheralDeviceIDs,
+    throw new HttpException(
+      {
+        status: HttpStatus.NOT_FOUND,
+        error: `Not matches items with Object ID ${id}`,
+      },
+      HttpStatus.NOT_FOUND,
     );
-
-    return {
-      id: gateway._id,
-      name: gateway.name,
-      ipAddress: gateway.ipAddress,
-      serialNumber: gateway.serialNumber,
-      peripheralDevice: peripheralDevice,
-    };
   }
 
   /**
@@ -62,12 +87,11 @@ export class GatewaysService {
    * Instead, you can use the class method `create` to achieve
    * the same effect.
    */
-  async insertOne(createGatewayDTO: CreateGatewayDTO): Promise<Gateway> {
+  async insertOne(createdGateway: Gateway): Promise<Gateway> {
     const gateway = await this.gatewayModel.create({
-      name: createGatewayDTO.name,
-      ipAddress: createGatewayDTO.ipAddress,
-      serialNumber: createGatewayDTO.serialNumber,
-      peripheralDeviceIDs: [],
+      name: createdGateway.name,
+      ipAddress: createdGateway.ipAddress,
+      serialNumber: createdGateway.serialNumber,
     });
 
     return {
@@ -81,9 +105,8 @@ export class GatewaysService {
 
   async addPeripheralDevice(
     id: string,
-    createPeripheralDeviceDTO: CreatePeripheralDeviceDTO,
-  ): Promise<{id: string}> {
-
+    createPeripheralDevice: PeripheralDevice,
+  ): Promise<{ id: string }> {
     if (!ObjectID.isValid(id)) {
       throw new HttpException(
         {
@@ -106,7 +129,11 @@ export class GatewaysService {
       );
     }
 
-    if (findGateway.peripheralDeviceIDs.length == 10) {
+    const count = await this.peripheralDeviceService.countByIDs(
+      ObjectID.createFromHexString(id),
+    );
+
+    if (count == 10) {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
@@ -117,28 +144,17 @@ export class GatewaysService {
     }
 
     const peripheralDevice = await this.peripheralDeviceService.insertOne(
-      createPeripheralDeviceDTO,
+      createPeripheralDevice,
+      ObjectID.createFromHexString(id),
     );
 
-    await this.gatewayModel.updateOne(
-      {
-        _id: id,
-      },
-      {
-        $push: {
-          peripheralDeviceIDs: peripheralDevice.id,
-        },
-      },
-    );
-
-    return {id: peripheralDevice.id};
+    return { id: peripheralDevice.id };
   }
 
   async removePeripheralDevice(
     id: string,
     peripheralDeviceID: string,
   ): Promise<{ deleted: boolean; message?: string }> {
-
     if (!ObjectID.isValid(id) || !ObjectID.isValid(peripheralDeviceID)) {
       throw new HttpException(
         {
@@ -160,17 +176,6 @@ export class GatewaysService {
         HttpStatus.BAD_REQUEST,
       );
     }
-
-    await this.gatewayModel.updateOne(
-      {
-        _id: id,
-      },
-      {
-        $pull: {
-          peripheralDeviceIDs: peripheralDeviceID,
-        },
-      },
-    );
 
     return await this.peripheralDeviceService.deleteOne(peripheralDeviceID);
   }

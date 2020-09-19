@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 @Schema()
 export class PeripheralDeviceDoc extends Document {
@@ -23,6 +23,12 @@ export class PeripheralDeviceDoc extends Document {
     enum: ['ONLINE', 'OFFLINE'],
   })
   status: string;
+
+  @Prop({
+    type: Types.ObjectId
+  })
+  gatewayID: Types.ObjectId;
+
 }
 
 export const PeripheralDeviceSchema = SchemaFactory.createForClass(
