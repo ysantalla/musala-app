@@ -26,6 +26,10 @@ export class GatewayService {
     return this.httpClient.patch(`${env.apiURL}/gateway/${gatewayID}/addDevice`, device);
   }
 
+  removeDevice(gatewayID: string, deviceID: string): Observable<any> {
+    return this.httpClient.patch(`${env.apiURL}/gateway/${gatewayID}/removeDevice/${deviceID}`, {});
+  }
+
   getOneGateway(gatewayID: string): Observable<any> {
     return this.httpClient.get(`${env.apiURL}/gateway/${gatewayID}`);
   }

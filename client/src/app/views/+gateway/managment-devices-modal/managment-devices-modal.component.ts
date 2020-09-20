@@ -10,15 +10,13 @@ import { Gateway } from '@app/core/interfaces/gateway.interface';
 @Component({
   selector: 'app-managment-devices-modal',
   templateUrl: './managment-devices-modal.component.html',
-  styleUrls: ['./managment-devices-modal.component.scss']
+  styleUrls: ['./managment-devices-modal.component.scss'],
 })
 export class ManagmentDevicesModalComponent implements OnInit {
-
   addDeviceForm: FormGroup;
-  loading = false;
+  loading: boolean;
 
   gateway: Gateway;
-
   reloadData: Subject<boolean>;
 
   constructor(
@@ -28,8 +26,6 @@ export class ManagmentDevicesModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.reloadData = new Subject<boolean>();
-
-    this.gateway = data.gateway;
   }
 
   ngOnInit(): void {
@@ -42,14 +38,21 @@ export class ManagmentDevicesModalComponent implements OnInit {
 
     this.addDeviceForm.disable();
 
-    this.reloadData.subscribe(data => {
-      this.gatewayService.getOneGateway(this.gateway._id).subscribe(data => {
-        this.gateway = data;
-      }, (response: HttpErrorResponse) => {
-        this.snackBar.open(response.error.message, 'X', {duration: 3000});
-      });
-
+    this.reloadData.subscribe((data) => {
+      this.loading = true;
+      this.gatewayService.getOneGateway(this.data.gatewayID).subscribe(
+        (data) => {
+          this.gateway = data;
+          this.loading = false;
+        },
+        (response: HttpErrorResponse) => {
+          this.loading = false;
+          this.snackBar.open('Loading error', 'X', { duration: 3000 });
+        }
+      );
     });
+
+    this.reloadData.next(true);
   }
 
   enable(): void {
@@ -57,24 +60,45 @@ export class ManagmentDevicesModalComponent implements OnInit {
   }
 
   onAddDevice(): void {
+    this.loading = true;
 
     if (this.addDeviceForm.valid) {
-      this.gatewayService.addDevice(this.data.gateway._id, {
-        status: this.addDeviceForm.value.status,
-        vendor: this.addDeviceForm.value.vendor,
-        uid: this.addDeviceForm.value.uid,
-        dateCreated: new Date(this.addDeviceForm.value.dateCreated).getTime(),
-      }).subscribe(data => {
-        this.snackBar.open('Adding peripheral device', 'X', {duration: 3000});
-        this.reloadData.next(true);
-      }, (response: HttpErrorResponse) => {
-        this.snackBar.open(response.error.message, 'X', {duration: 3000});
-      });
+      this.gatewayService
+        .addDevice(this.data.gatewayID, {
+          status: this.addDeviceForm.value.status,
+          vendor: this.addDeviceForm.value.vendor,
+          uid: this.addDeviceForm.value.uid,
+          dateCreated: new Date(this.addDeviceForm.value.dateCreated).getTime(),
+        })
+        .subscribe(
+          (data) => {
+            this.snackBar.open('Adding peripheral device', 'X', {
+              duration: 3000,
+            });
+            this.reloadData.next(true);
+          },
+          (response: HttpErrorResponse) => {
+            this.loading = false;
+
+            this.snackBar.open(response.error.error, 'X', { duration: 3000 });
+          }
+        );
     }
   }
 
   removeDevice(gatewayID: string, deviceID: string): void {
-    console.log(gatewayID, deviceID);
+    this.loading = true;
+    this.gatewayService.removeDevice(gatewayID, deviceID).subscribe(
+      (data) => {
+        this.snackBar.open('Remove peripheral device', 'X', {
+          duration: 3000,
+        });
+        this.reloadData.next(true);
+      },
+      (response: HttpErrorResponse) => {
+        this.loading = false;
+        this.snackBar.open(response.error.error, 'X', { duration: 3000 });
+      }
+    );
   }
-
 }

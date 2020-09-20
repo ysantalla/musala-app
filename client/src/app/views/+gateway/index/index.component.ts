@@ -39,9 +39,9 @@ export class IndexComponent implements AfterViewInit {
     public dialog: MatDialog
   ) {}
 
-  openDetailsModalDialog(gateway?: Gateway): void {
+  openDetailsModalDialog(id?: string): void {
     const dialogRef = this.dialog.open(DetailsModalComponent, {
-      data: { gateway},
+      data: { gatewayID: id},
     });
 
 
@@ -50,9 +50,9 @@ export class IndexComponent implements AfterViewInit {
     });
   }
 
-  openManagementDevicesModalDialog(gateway?: Gateway): void {
+  openManagementDevicesModalDialog(id?: string): void {
     const dialogRef = this.dialog.open(ManagmentDevicesModalComponent, {
-      data: { gateway},
+      data: { gatewayID: id},
     });
 
 

@@ -1,6 +1,9 @@
 <div style="width: 75vw">
+  <div class="loading-shade" *ngIf="loading">
+    <mat-spinner *ngIf="loading"></mat-spinner>
+  </div>
   <h2 mat-dialog-title>
-    Managenment Peripheral Devices to {{ gateway.name }} gateway
+    Managenment Peripheral Devices to {{ gateway?.name }} gateway
   </h2>
   <mat-dialog-content class="mat-typography">
     <div fxLayout="row" fxLayoutAlign="start start">
@@ -108,7 +111,7 @@
       >
         <div
           fxFlex="19%"
-          *ngFor="let item of gateway.peripheralDevice"
+          *ngFor="let item of gateway?.peripheralDevice"
           style="
             padding: 7px;
             margin: 3px;
