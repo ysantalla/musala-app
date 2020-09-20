@@ -52,26 +52,22 @@ describe('GatewayController', () => {
       })).toBe(result);
     });
 
-    it('should insert invalid ip address', async () => {
-      const result: Gateway = {
-        ipAddress: '1',
-        name: 'Gateway-1',
-        serialNumber: 'M123456',
-      };
+    describe('get Gateway', () => {
+      it('get all gateway', async () => {
 
-      jest
-        .spyOn(gatewaysService, 'insertOne')
-        .mockImplementation(async () => result);
-
-      const result1 = await gatewaysController.createGateway({
-        ipAddress: '1',
-        name: 'Gateway-1',
-        serialNumber: 'M123456'
+        const result: Gateway[] = [];  
+        const count = 0;      
+  
+        jest
+          .spyOn(gatewaysService, 'getAll')
+          .mockImplementation(async () => result);
+        jest
+          .spyOn(gatewaysService, 'count')
+          .mockImplementation(async () => count);
+  
+        expect(await gatewaysController.getAll()).toStrictEqual({"count": 0, "items": []});
       });
-
-      console.log(result1);
-
-      expect(result1).toBe(false);
     });
+
   });
 });

@@ -15,10 +15,20 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/gateway (GET)', () => {
     return request(app.getHttpServer())
-      .get('/')
+      .get('/gateway')
       .expect(200)
-      .expect('Hello World!');
+  });
+
+  it('create (POST)', () => {
+    return request(app.getHttpServer())
+      .post('/gateway/create')
+      .send({
+        name: "Gat 1",
+        serialNumber: 'S-12345',
+        ipAddress: '192.2.3.4',
+      })
+      .expect(201)
   });
 });

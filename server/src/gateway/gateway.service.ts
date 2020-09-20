@@ -30,6 +30,26 @@ export class GatewaysService {
       for (const field of order.split(' ')) {
         sort[field.replace('-', '')] = (field.includes('-')) ? -1 : 1;
       }
+
+      return await this.gatewayModel.aggregate([
+        {
+          $lookup: {
+            from: PeripheralDeviceDoc.name,
+            localField: '_id',
+            foreignField: 'gatewayID',
+            as: 'peripheralDevice',
+          },
+        },
+        {
+          $sort: sort,
+        },
+        {
+          $skip: skip * limit,
+        },
+        {
+          $limit: limit,
+        }
+      ]);
     }
 
     return await this.gatewayModel.aggregate([
@@ -40,9 +60,6 @@ export class GatewaysService {
           foreignField: 'gatewayID',
           as: 'peripheralDevice',
         },
-      },
-      {
-        $sort: sort,
       },
       {
         $skip: skip * limit,

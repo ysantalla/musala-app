@@ -50,3 +50,13 @@ Once the client application is running you can visit [http://localhost:4000](htt
 ### Build docker image for client
 
 $ docker build -t mclient:v1.0.0 .
+
+### Server unit tests (incomplete)
+
+$ npm run test
+
+### Server integration tests (incomplete)
+
+$ npm run test:e2e
+
+### Client test (incomplete)
