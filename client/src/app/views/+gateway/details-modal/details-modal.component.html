@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Gateway details</h2>
+<mat-dialog-content class="mat-typography">
+  <mat-list>
+    <mat-list-item>
+      <h3 class="mat-h3">Name: {{ data.gateway.name }}</h3></mat-list-item
+    >
+    <mat-list-item>
+      <h3 class="mat-h3">
+        IP address: {{ data.gateway.ipAddress }}
+      </h3></mat-list-item
+    >
+    <mat-list-item>
+      <h3 class="mat-h3">
+        Serial number: {{ data.gateway.serialNumber }}
+      </h3></mat-list-item
+    >
+  </mat-list>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Cancel</button>
+</mat-dialog-actions>

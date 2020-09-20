@@ -1,5 +1,5 @@
 export interface PeripheralDevice {
-  id?: string;
+  _id?: string;
   uid: number;
   vendor: string;
   status: string;

@@ -25,6 +25,13 @@ import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatSortModule } from '@angular/material/sort';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatDialogModule } from '@angular/material/dialog';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import {MatSelectModule} from '@angular/material/select';
+import {MatChipsModule} from '@angular/material/chips';
+
 
 
 @NgModule({
@@ -44,7 +51,12 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     MatProgressBarModule,
     FlexLayoutModule,
     MatMenuModule,
-    DragDropModule
+    DragDropModule,
+    MatDialogModule,
+    MatGridListModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSelectModule
   ],
   exports: [
     LayoutModule,
@@ -65,7 +77,13 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSortModule,
-    DragDropModule
+    DragDropModule,
+    MatDialogModule,
+    MatGridListModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSelectModule,
+    MatChipsModule
   ]
 })
 export class SharedModule {

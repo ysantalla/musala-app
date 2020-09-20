@@ -1,5 +1,5 @@
 export interface Gateway {
-  id?: string;
+  _id?: string;
   name: string;
   serialNumber: string;
   ipAddress: string;
@@ -7,7 +7,7 @@ export interface Gateway {
 }
 
 export interface PeripheralDevice {
-  id?: string;
+  _id?: string;
   uid: number;
   vendor: string;
   status: string;

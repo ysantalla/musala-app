@@ -27,7 +27,7 @@ export class PeripheralDeviceService {
     });
 
     return {
-      id: peripheralDevice._id,
+      _id: peripheralDevice._id,
       status: peripheralDevice.status,
       dateCreated: peripheralDevice.dateCreated.getMilliseconds(),
       uid: peripheralDevice.uid,

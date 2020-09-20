@@ -1,13 +1,11 @@
 /* Structure */
 .container {
-  position: relative;
-  min-height: 200px;
+  height: auto;
+  min-height: auto;
 }
 
 .table-container {
   position: relative;
-  max-height: 400px;
-  overflow: auto;
 }
 
 table {

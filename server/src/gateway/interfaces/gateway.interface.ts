@@ -1,7 +1,7 @@
 import { PeripheralDevice } from "./peripheral-device.interface";
 
 export interface Gateway {
-  id?: string;
+  _id?: string;
   name: string;
   serialNumber: string;
   ipAddress: string;

@@ -2,7 +2,7 @@ import { IsNotEmpty, IsEnum, IsNumber } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 export class PeripheralDeviceDTO {
-  @IsNotEmpty()
+  @IsNumber()
   @ApiProperty()
   uid: number;
 

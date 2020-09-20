@@ -95,7 +95,7 @@ export class GatewaysService {
     });
 
     return {
-      id: gateway._id,
+      _id: gateway._id,
       name: gateway.name,
       ipAddress: gateway.ipAddress,
       serialNumber: gateway.serialNumber,
@@ -148,7 +148,7 @@ export class GatewaysService {
       ObjectID.createFromHexString(id),
     );
 
-    return { id: peripheralDevice.id };
+    return { id: peripheralDevice._id };
   }
 
   async removePeripheralDevice(

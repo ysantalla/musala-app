@@ -4,9 +4,13 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {merge, Observable, of as observableOf} from 'rxjs';
 import {catchError, map, startWith, switchMap} from 'rxjs/operators';
-import { Gateway } from '@app/core/interface/gateway.interface';
+
+import {MatDialog} from '@angular/material/dialog';
+import { Gateway } from '@app/core/interfaces/gateway.interface';
 
 import {environment as env} from '@env/environment';
+import { DetailsModalComponent } from '../details-modal/details-modal.component';
+import { ManagmentDevicesModalComponent } from '../managment-devices-modal/managment-devices-modal.component';
 
 /**
  * @title Table retrieving data through HTTP
@@ -18,22 +22,47 @@ import {environment as env} from '@env/environment';
 })
 export class IndexComponent implements AfterViewInit {
 
-  displayedColumns: string[] = ['name', 'serialNumber', 'ipAddress'];
+  displayedColumns: string[] = ['name', 'serialNumber', 'ipAddress', 'peripheralDevices', 'details'];
   apiDatabase: ApiHttpDatabase | null;
   data: Gateway[] = [];
 
   resultsLength = 0;
-  itemsxpage = 2;
+  itemsxpage = 10;
   isLoadingResults = true;
   isRateLimitReached = false;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(private _httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    public dialog: MatDialog
+  ) {}
+
+  openDetailsModalDialog(gateway?: Gateway): void {
+    const dialogRef = this.dialog.open(DetailsModalComponent, {
+      data: { gateway},
+    });
+
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
+
+  openManagementDevicesModalDialog(gateway?: Gateway): void {
+    const dialogRef = this.dialog.open(ManagmentDevicesModalComponent, {
+      data: { gateway},
+    });
+
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
 
   ngAfterViewInit() {
-    this.apiDatabase = new ApiHttpDatabase(this._httpClient);
+    this.apiDatabase = new ApiHttpDatabase(this.httpClient);
 
     // If the user changes the sort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
@@ -43,7 +72,7 @@ export class IndexComponent implements AfterViewInit {
         startWith({}),
         switchMap(() => {
           this.isLoadingResults = true;
-          return this.apiDatabase!.getGateways(
+          return this.apiDatabase.getGateways(
             this.sort.active, this.sort.direction, this.paginator.pageIndex, this.paginator.pageSize);
         }),
         map(data => {
@@ -72,9 +101,9 @@ interface ApiGateways {
 /** An api database that the data source uses to retrieve data for the table. */
 export class ApiHttpDatabase {
 
-  constructor(private _httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) {}
 
   getGateways(sortBy: string, order: string, page: number, limit: number): Observable<ApiGateways> {
-    return this._httpClient.get<ApiGateways>(`${env.apiURL}/gateway?skip=${page}&limit=${limit}`);
+    return this.httpClient.get<ApiGateways>(`${env.apiURL}/gateway?skip=${page}&limit=${limit}`);
   }
 }
