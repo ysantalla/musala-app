@@ -34,15 +34,23 @@ export class GatewaysController {
     type: Number,
     required: false,
   })
+  @ApiQuery({
+    name: 'order',
+    description: `'name -email', means: order property name ASC and email DESC`,
+    type: String,
+    required: false,
+  })
   async getAll(
     @Query('limit') limit?: string,
     @Query('skip') skip?: string,
+    @Query('order') order?: string,
   ): Promise<{ items: Gateway[]; count: number }> {
 
     if (isNumberString(limit) && isNumberString(skip)) {
       const gateways = await this.gatewaysService.getAll(
         parseInt(limit),
         parseInt(skip),
+        order
       );
       const count = await this.gatewaysService.count();
 
@@ -52,7 +60,7 @@ export class GatewaysController {
       };
     }
 
-    const gateways = await this.gatewaysService.getAll();
+    const gateways = await this.gatewaysService.getAll(10, 0, order);
     const count = await this.gatewaysService.count();
 
     return {

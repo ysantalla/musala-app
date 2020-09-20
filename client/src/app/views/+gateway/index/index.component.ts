@@ -104,6 +104,11 @@ export class ApiHttpDatabase {
   constructor(private httpClient: HttpClient) {}
 
   getGateways(sortBy: string, order: string, page: number, limit: number): Observable<ApiGateways> {
-    return this.httpClient.get<ApiGateways>(`${env.apiURL}/gateway?skip=${page}&limit=${limit}`);
+    let sort = sortBy;
+    if (order === 'asc') {
+      sort = `-${sortBy}`;
+    }
+
+    return this.httpClient.get<ApiGateways>(`${env.apiURL}/gateway?skip=${page}&limit=${limit}&order=${sort}`);
   }
 }

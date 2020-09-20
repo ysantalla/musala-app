@@ -21,7 +21,16 @@ export class GatewaysService {
   async getAll(
     limit = 10,
     skip = 0,
+    order = ''
   ): Promise<Gateway[]> {
+
+    const sort: any = {};
+
+    if (order) {
+      for (const field of order.split(' ')) {
+        sort[field.replace('-', '')] = (field.includes('-')) ? -1 : 1;
+      }
+    }
 
     return await this.gatewayModel.aggregate([
       {
@@ -33,11 +42,14 @@ export class GatewaysService {
         },
       },
       {
+        $sort: sort,
+      },
+      {
         $skip: skip * limit,
       },
       {
         $limit: limit,
-      },
+      }
     ]);
   }
 
