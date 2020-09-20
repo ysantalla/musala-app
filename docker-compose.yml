@@ -12,14 +12,16 @@ volumes:
 services:
   mongodb:
     image: mongo
+    networks:
+      - "private"
     volumes:
       - mongodb:/var/lib/mongodb
     ports:
-      - 27017:27017
+      - 27017
     restart: always
 
   server:
-    image: mserver:v1.0.0
+    build: ./server
     depends_on:
       - "mongodb"
     networks:
@@ -27,14 +29,14 @@ services:
     ports:
       - "3000:3000"
     environment:
-      MONGODB_URI: "mongodb://localhost:27017/gateway"
+      MONGODB_URI: "mongodb://mongodb:27017/gateway"
       PORT: 3000
       
     command: "npm run start:prod"
     restart: "unless-stopped"
 
   client:
-    image: mserver:v1.0.0
+    build: ./client
     depends_on:
       - "server"
     networks:

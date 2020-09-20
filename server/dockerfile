@@ -6,7 +6,7 @@ LABEL maintainer="Yasmany Santalla Pereda <ysantalla88@gmail.com>"
 WORKDIR /opt/server
 
 COPY . ./
-#RUN npm install
+RUN npm install
 
 ENV PATH="./node_modules/.bin:$PATH"
 

@@ -12,10 +12,14 @@
 $ git clone https://github.com/ysantalla/musala-app.git
 $ cd musala-app
 
+### Deploy with Docker-compose
+
+$ docker-compose up
+
 ### Server installation
 
 $ npm i -g @nestjs/cli
-$ cd server & npm install
+$ cd server && npm install
 
 ### Build docker image for server
 
@@ -30,7 +34,7 @@ Once the server application is running you can visit [http://localhost:3000/doc]
 ### Client installation
 
 $ npm i -g @angular/cli
-$ cd client & npm install
+$ cd client && npm install
 
 ### Running Client developer mode
 
@@ -46,7 +50,3 @@ Once the client application is running you can visit [http://localhost:4000](htt
 ### Build docker image for client
 
 $ docker build -t mclient:v1.0.0 .
-
-### Deploy with Docker-compose
-
-$ docker-compose up
