@@ -7,6 +7,11 @@
 * Nestjs 7.0.0 (with expressjs nodejs v12.0.0 lts)
 * MongoDB (data persistent)
 
+### Clone github repo
+
+$ git clone https://github.com/ysantalla/musala-app.git
+$ cd musala-app
+
 ### Server installation
 
 $ npm i -g @nestjs/cli
@@ -21,7 +26,6 @@ $ docker build -t mserver:v1.0.0 .
 $ npm run build && npm run start:prod
 
 Once the server application is running you can visit [http://localhost:3000/doc](http://localhost:3000/doc) to see the Swagger interface.
-
 
 ### Client installation
 
@@ -45,4 +49,4 @@ $ docker build -t mclient:v1.0.0 .
 
 ### Deploy with Docker-compose
 
-$ cd deploy && docker-compose up
+$ docker-compose up

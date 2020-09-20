@@ -12,8 +12,6 @@ volumes:
 services:
   mongodb:
     image: mongo
-    networks:
-      - "private"
     volumes:
       - mongodb:/var/lib/mongodb
     ports:
@@ -29,15 +27,20 @@ services:
     ports:
       - "3000:3000"
     environment:
-      MONGO_CONNECTION: "mongodb://mongodb:27017"
-      MONGO_DATABASE: "kueskidb"
-      SERVER_SCHEMA: "http"
-      SERVER_URL: "api.kueski.local"
-      SERVER_PORT: ":8000"
-      SERVER_JWT_SECRET: "sECrEt"
+      MONGODB_URI: "mongodb://localhost:27017/gateway"
+      PORT: 3000
       
     command: "npm run start:prod"
     restart: "unless-stopped"
 
-    
-
+  client:
+    image: mserver:v1.0.0
+    depends_on:
+      - "server"
+    networks:
+      - "private"
+    ports:
+      - "4000:4000"
+      
+    command: "npm run serve:ssr"
+    restart: "unless-stopped"

@@ -5,10 +5,8 @@ LABEL maintainer="Yasmany Santalla Pereda <ysantalla88@gmail.com>"
 
 WORKDIR /opt/client
 
-#COPY package.json ./
-#RUN npm install
-
 COPY . ./
+#RUN npm install
 
 ENV PATH="./node_modules/.bin:$PATH"
 
